@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server en python</title>
+</head>
+<body>
+    Saludo: <input type="text" 
+        name="txtNombre" id="txtNombre">
+    <div id="dvSaludo"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", e=>{
+            txtNombre.addEventListener("keyup", event=>{
+                fetch("https://orange-space-halibut-x55jxr65qqcvr59-3000.app.github.dev", {
+                    method: "POST",
+                    body: txtNombre.value
+                }).then(resp=>resp.text())
+                .then(resp=>{
+                    dvSaludo.innerHTML = resp;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
