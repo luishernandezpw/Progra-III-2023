@@ -15,6 +15,6 @@ class crud:
             print("Error de conexion")
 
     def consultar(self, sql):
-        cursor = self.conexion.cursor()
+        cursor = self.conexion.cursor(dictionary=True)
         cursor.execute(sql)
         return cursor.fetchall()
