@@ -22,10 +22,13 @@ class miServer(SimpleHTTPRequestHandler):
         datos= self.rfile.read(longitud)
         datos = datos.decode()
         datos = parse.unquote(datos)
+        datos = json.loads(datos)
+        if self.path=="/alumnos":
+            resp = {"msg": crud_alumnos.administrar(datos)}
         
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(datos.encode())
+        self.wfile.write(json.dumps(resp).encode())
         
 print("Ejecuntando server en puerto ", port)
 server = HTTPServer(("localhost", port), miServer)
