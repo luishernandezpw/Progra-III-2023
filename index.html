@@ -1,156 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <title>Server en python</title>
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-6">
-                <form method="post" id="frmAlumnos" data-idalumno="-1" data-accion="nuevo">
-                    <div class="card text-bg-dark mb-3">
-                        <div class="card-header border-success">Registro de Alumnos</div>
-                        <div class="card-body">
-                            <div class="row p-1">
-                                <div class="col-3">CODIGO:</div>
-                                <div class="col-3">
-                                    <input required type="text" name="txtCodigoAlumnos" id="txtCodigoAlumnos" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row p-1">
-                                <div class="col-3">NOMBRE:</div>
-                                <div class="col-6">
-                                    <input required type="text" name="txtNombreAlumnos" id="txtNombreAlumnos" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row p-1">
-                                <div class="col-3">DIRECCION:</div>
-                                <div class="col-9">
-                                    <input required type="text" name="txtDireccionAlumnos" id="txtDireccionAlumnos" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-3">TELEFONO:</div>
-                                <div class="col-3">
-                                    <input required type="text" name="txtTelefonoAlumnos" id="txtTelefonoAlumnos" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-success">
-                            <div class="row">
-                                <div class="col text-center">
-                                    <input type="reset" value="Nuevo" class="btn btn-danger">
-                                    <input type="submit" value="Guardar" class="btn btn-success">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-6">
-                <div class="card text-bg-dark mb-3">
-                    <div class="card-header border-success">Consulta de Alumnos</div>
-                    <div class="card-body">
-                        <div class="row p-1">
-                            <div class="col">
-                                <table class="table table-sm table-hover table-dark" id="tblConsultaAlumnos">
-                                    <thead>
-                                        <tr>
-                                            <th>CODIGO</th>
-                                            <th>NOMBRE</th>
-                                            <th>DIRECCION</th>
-                                            <th>TEL</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody> </tbody>
-                                </table>
-                            </div>
-                        </div>  
-                    </div>
-                </div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">::. Sistema Academico.::</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mimenu" id="mnxMenu">
+                    <li class="nav-item">
+                        <a class="nav-link" data-form="alumnos" href="#">Alumnos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-form="materias" href="#">Materias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-form="docentes" href="#">Docentes</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="absolute" id="alumnos"></div>
+        <div class="absolute" id="materias"></div>
+        <div class="absolute" id="docentes"></div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     <script>
         document.addEventListener("DOMContentLoaded", e=>{
-            frmAlumnos.addEventListener("submit",event=>{
+            mnxMenu.addEventListener("click", event=>{
                 event.preventDefault();
 
-                let datos = {
-                    accion : frmAlumnos.dataset.accion,
-                    idAlumno: frmAlumnos.dataset.idalumno,
-                    codigo: txtCodigoAlumnos.value,
-                    nombre: txtNombreAlumnos.value,
-                    direccion: txtDireccionAlumnos.value,
-                    telefono: txtTelefonoAlumnos.value,
-                };
-                fetch("/alumnos", {
-                    method: "POST",
-                    body: JSON.stringify(datos)
-                }).then(resp=>resp.json())
-                .then(respuesta=>{
-                    if( respuesta.msg=="ok" ){
-                        limpiarDatosAlumnos();
-                        mostrarDatosAlumnos();
-                    }
-                });
+                let form = event.target.dataset.form,
+                    $element = $(`#${form}`);
+                if( $element.find("form").length<=0 ){
+                    fetch('/frmalumnos').then(resp=>resp.text()).then(resp=>{
+                        $($element).html(resp);
+                    });
+                }
             });
-            mostrarDatosAlumnos();
         });
-        function eliminarAlumno(alumno){
-            if( confirm(`Esta seguro de eliminar a: ${alumno.nombre}`) ){
-                fetch("/alumnos", {
-                    method: "POST",
-                    body: JSON.stringify({accion: "eliminar", idAlumno: alumno.idAlumno})
-                }).then(resp=>resp.json())
-                .then(respuesta=>{
-                    if( respuesta.msg=="ok" ){
-                        limpiarDatosAlumnos();
-                        mostrarDatosAlumnos();
-                    }
-                });
-            }
-        }
-        function modificarAlumno(alumno){
-            frmAlumnos.dataset.accion = "modificar";
-            frmAlumnos.dataset.idalumno = alumno.idAlumno;
-            txtCodigoAlumnos.value = alumno.codigo;
-            txtNombreAlumnos.value = alumno.nombre;
-            txtDireccionAlumnos.value = alumno.direccion;
-            txtTelefonoAlumnos.value = alumno.telefono;
-        }
-        function limpiarDatosAlumnos(){
-            frmAlumnos.dataset.accion = "nuevo";
-            frmAlumnos.dataset.idalumno = "-1";
-            txtCodigoAlumnos.value = "";
-            txtNombreAlumnos.value = "";
-            txtDireccionAlumnos.value = "";
-            txtTelefonoAlumnos.value = "";
-        }
-        function mostrarDatosAlumnos(){
-            fetch("/alumnos").then(resp=>resp.json())
-            .then(resp=>{
-                let $tblAlumnos = document.querySelector("#tblConsultaAlumnos > tbody"),
-                    $filas = '';
-                resp.forEach(alumno => {
-                    $filas += `
-                        <tr onClick='modificarAlumno(${ JSON.stringify(alumno) })'>
-                            <td>${alumno.codigo}</td>
-                            <td>${alumno.nombre}</td>
-                            <td>${alumno.direccion}</td>
-                            <td>${alumno.telefono}</td>
-                            <td><button onClick='eliminarAlumno(${ JSON.stringify(alumno) })' class="btn btn-danger">Eliminar</button></td>
-                        </tr>
-                    `;
-                });
-                $tblAlumnos.innerHTML = $filas;
-            });
-        }
     </script>
 </body>
 </html>
