@@ -32,25 +32,39 @@
         </div>
     </nav>
     <div class="container-fluid">
-        <div class="absolute" id="alumnos"></div>
-        <div class="absolute" id="materias"></div>
-        <div class="absolute" id="docentes"></div>
+        <div class="position-absolute" id="alumnos"></div>
+        <div class="position-absolute" id="busqueda_alumnos"></div>
+        <div class="position-absolute" id="materias"></div>
+        <div class="position-absolute" id="docentes"></div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", e=>{
             mnxMenu.addEventListener("click", event=>{
                 event.preventDefault();
 
-                let form = event.target.dataset.form,
-                    $element = $(`#${form}`);
-                if( $element.find("form").length<=0 ){
-                    fetch('/frmalumnos').then(resp=>resp.text()).then(resp=>{
-                        $($element).html(resp);
-                    });
-                }
+                let form = event.target.dataset.form;
+                abrirVentana(form);
             });
         });
+        function abrirVentana(form){
+            $element = $(`#${form}`);
+            if( $element.find("form").length<=0 ){
+                fetch(`/frm${form}`).then(resp=>resp.text()).then(resp=>{
+                    $($element).html(resp).draggable();
+                    closeForm();
+                });
+            }else{
+                $element.show();
+            }
+        }
+        function closeForm(){
+            $('.close').off('click').on('click',event=>{
+                let form = event.target.dataset.form;
+                $(`#${form}`).hide();
+            });
+        }
     </script>
 </body>
 </html>
