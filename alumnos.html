@@ -49,6 +49,7 @@
     btnBuscarAlumno.addEventListener('click', event=>{
         event.preventDefault();
         abrirVentana('busqueda_alumnos');
+        $element.show();
     });
     frmAlumnos.addEventListener("submit",event=>{
         event.preventDefault();
@@ -67,6 +68,7 @@
         .then(respuesta=>{
             if( respuesta.msg=="ok" ){
                 limpiarDatosAlumnos();
+                mostrarDatosAlumnos();
             }
         });
     });
