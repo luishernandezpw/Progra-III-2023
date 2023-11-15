@@ -55,7 +55,7 @@ ROOT_URLCONF = 'appacademica.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['C:/Users/Luis Hernandez/Desktop/Progra-III-2023/appacademica/appalumnos/plantillas'],
+        'DIRS': [BASE_DIR / 'appalumnos/plantillas'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
